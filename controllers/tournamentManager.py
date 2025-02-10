@@ -1,5 +1,5 @@
-from models import Player, Tournament, Round, Match
-from views import TournamentView, PlayerView
+from models import Tournament, Round, Match
+from views import TournamentView
 
 import random
 
@@ -54,33 +54,3 @@ class TournamentManager:
 
     def display_matchs(self):
         self.tournamentView.display_matchs(self.tournament)
-
-
-class PlayerManager:
-    def __init__(self):
-        self.players = []
-        self.players.append(Player("Dupont", "Jean", "15/04/1985", "AB12345"))
-        self.players.append(Player("Martin", "Sophie", "22/08/1990", "CD67890"))
-        self.players.append(Player("Durand", "Lucas", "05/12/1983", "EF13579"))
-        self.players.append(Player("Lefevre", "Emma", "30/06/1995", "GH24680"))
-        self.players.append(Player("Morel", "Hugo", "17/02/1988", "IJ98765"))
-        self.players.append(Player("Lemoine", "Alice", "09/09/1992", "KL54321"))
-        self.players.append(Player("Rousseau", "Thomas", "28/11/1980", "MN11223"))
-        self.players.append(Player("Perrin", "Camille", "14/07/1987", "OP33445"))
-        self.players.append(Player("Fournier", "Noé", "03/03/1993", "QR55667"))
-        self.players.append(Player("Girard", "Laura", "19/10/1991", "ST77889"))
-        self.players.append(Player("Blanc", "Maxime", "25/05/1986", "UV99001"))
-        self.players.append(Player("Gauthier", "Julie", "07/01/1994", "WX22334"))
-        self.players.append(Player("Chevalier", "Antoine", "12/06/1989", "YZ44556"))
-        self.players.append(Player("André", "Lucie", "08/04/1996", "AB66778"))
-        self.players.append(Player("Bernard", "Paul", "21/09/1984", "CD88990"))
-        self.players.append(Player("Noel", "Clara", "02/12/1982", "EF11223"))
-
-        self.playerView = PlayerView()
-
-    def display_players(self):
-        self.playerView.display_players(self.players)
-
-    def reset_scores(self):
-        for player in self.players:
-            player.score = 0

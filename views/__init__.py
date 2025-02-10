@@ -1,5 +1,6 @@
-from .menu import Menu
-from .rapport import Rapport
-from .views import TournamentView, PlayerView
+from .menuView import MenuView
+from .rapportView import Rapport
+from .tournamentView import TournamentView
+from .userView import UserView
 
-__all__ = ['Menu', 'Rapport', 'TournamentView', 'PlayerView']
+__all__ = ['MenuView', 'Rapport', 'TournamentView', 'UserView']
