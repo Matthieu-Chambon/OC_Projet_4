@@ -3,7 +3,6 @@ class MenuView:
         print("\nx=x=x=x=x=x=x MENU PRINCIPAL x=x=x=x=x=x=x\n")
         print("  1. Utilisateurs")
         print("  2. Tournois")
-        print("  3. Jouer 1 tour")
         print("  Q. Quitter")
 
         return input("\n>>> Entrez votre choix : ")
@@ -18,3 +17,16 @@ class MenuView:
         print("  Q. <== Retour")
 
         return input("\n>>> Entrez votre choix : ")
+
+    def tournament_menu(self):
+        print("\nx=x=x=x=x=x=x TOURNOIS x=x=x=x=x=x=x\n")
+        print("  1. Afficher le tournoi en cours")
+        print("  2. Créer un nouveau tournoi")
+        print("  3. Afficher les matchs du tour en cours")
+        print("  4. Modifier un match")
+        print("  5. Terminer le tour")
+        print("  6. Afficher les joueurs du tournoi")
+        print("  Q. <== Retour")
+
+        return input("\n>>> Entrez votre choix : ")
+

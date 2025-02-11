@@ -13,9 +13,7 @@ class MenuManager:
                 case "1":
                     self.display_user_menu(tournamentManager, userManager)
                 case "2":
-                    pass
-                case "3":
-                    tournamentManager.auto_play_one_round()
+                    self.display_tournament_menu(tournamentManager, userManager)
                 case "q" | "Q":
                     break
                 case _:
@@ -36,6 +34,29 @@ class MenuManager:
                     userManager.create_fake_users()
                 case "5":
                     userManager.create_new_user()
+                case "q" | "Q":
+                    break
+                case _:
+                    print("Choix invalide, veuillez réessayer.")
+
+    def display_tournament_menu(self, tournamentManager, userManager):
+        while True:
+            choice = self.menuView.tournament_menu()
+
+            match choice:
+                case "1":
+                    tournamentManager.display_tournament()
+                    # tournamentManager.display_tournaments()
+                case "2":
+                    tournamentManager.create_new_tournament(userManager)
+                case "3":
+                    tournamentManager.display_current_round()
+                case "4":
+                    tournamentManager.edit_match()
+                case "5":
+                    tournamentManager.end_round()
+                case "6":
+                    tournamentManager.display_players()
                 case "q" | "Q":
                     break
                 case _:
