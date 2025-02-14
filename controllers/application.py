@@ -7,5 +7,5 @@ class Application:
         self.tournamentManager = TournamentManager()
         self.menuManager = MenuManager()
 
-    def menu(self):
+    def display_menu(self):
         self.menuManager.display_main_menu(self.tournamentManager, self.userManager)

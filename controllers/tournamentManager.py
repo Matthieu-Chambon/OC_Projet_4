@@ -2,11 +2,15 @@ from models import Tournament, Round, Match
 from views import TournamentView
 
 import random
+from datetime import datetime
+import json
+# import os
 
 
 class TournamentManager:
     def __init__(self):
         self.tournamentView = TournamentView()
+        self.tournaments = []
 
     def create_new_tournament(self, userManager):
 
@@ -18,7 +22,7 @@ class TournamentManager:
         if place == "":
             place = "Paris"
 
-        rounds = input("\n>>> Entrez le nombre de round : ")
+        rounds = int(input("\n>>> Entrez le nombre de round : "))
         if rounds == "":
             rounds = 4
 
@@ -36,71 +40,96 @@ class TournamentManager:
             else:
                 players.append(userManager.users[int(player)-1])
 
-        self.tournament = Tournament(name, place, rounds, players, description)
-        self.sort_players()
-        self.tournamentView.display_tournament(self.tournament)
-        self.tournamentView.display_players(self.tournament)
-        self.create_round()
-        self.create_matchs()
+        self.tournaments.append(Tournament(name, place, rounds, players, description))
+        self.sort_players(self.tournaments[-1])
+        self.tournamentView.display_tournament(self.tournaments[-1])
+        self.tournamentView.display_players(self.tournaments[-1])
+        self.create_round(self.tournaments[-1])
+        self.create_matchs(self.tournaments[-1])
 
-    def sort_players(self):
-        if self.tournament.currentRound == 1:
-            random.shuffle(self.tournament.playersList)
+    def sort_players(self, tournament):
+        if tournament.currentRound == 1:
+            random.shuffle(tournament.playersList)
         else:
-            self.tournament.playersList.sort(key=lambda player: player.score, reverse=True)
+            tournament.playersList.sort(key=lambda player: player.score, reverse=True)
 
-    def create_round(self):
-        self.tournament.roundsList.append(Round("Round " + str(self.tournament.currentRound)))
+    def create_round(self, tournament):
+        tournament.roundsList.append(Round("Round " + str(tournament.currentRound)))
 
     # Créer les matchs d'un round en fonction du tri
-    def create_matchs(self):
+    def create_matchs(self, tournament):
         # Créer nb_joueurs/2 matchs
-        for i in range(int(len(self.tournament.playersList)/2)):
-            self.tournament.roundsList[self.tournament.currentRound-1].matchsList.append(Match(self.tournament.playersList[i*2], self.tournament.playersList[i*2+1]))
+        for i in range(int(len(tournament.playersList)/2)):
+            tournament.roundsList[tournament.currentRound-1].matchsList.append(Match(tournament.playersList[i*2], tournament.playersList[i*2+1]))
 
-    def random_results(self):
-        for match in self.tournament.roundsList[self.tournament.currentRound-1].matchsList:
-            match.score1 = random.choice([0, 1])
-            if match.score1 == 0:
-                match.score2 = 1
-                match.joueur2.score += 1
+    def edit_match(self, tournament):
+        while True:
+            self.display_round(tournament.roundsList[-1])
+            match = input("\n>>> Entrez le numéro du match à modifier (q pour quitter) : ")
+            if match == "q":
+                break
+            elif int(match) <= len(tournament.roundsList[-1].matchsList) and int(match) > 0:
+                score1 = input("\n>>> Entrez le score du joueur 1 : ")
+                score2 = input(">>> Entrez le score du joueur 2 : ")
+
+                tournament.roundsList[tournament.currentRound-1].matchsList[int(match)-1].score1 = int(score1)
+                tournament.roundsList[tournament.currentRound-1].matchsList[int(match)-1].score2 = int(score2)
             else:
-                match.score2 = 0
-                match.joueur1.score += 1
+                print("Match invalide.")
 
-    def edit_match(self):
-        self.display_current_round()
-        match = input("\n>>> Entrez le numéro du match à modifier : ")
-        score1 = input("\n>>> Entrez le score du joueur 1 : ")
-        score2 = input("\n>>> Entrez le score du joueur 2 : ")
+    def end_round(self, tournament):
+        if tournament.status == "En cours":
+            self.calculate_player_score(tournament)
+            tournament.roundsList[-1].endDate = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
 
-        self.tournament.roundsList[self.tournament.currentRound-1].matchsList[int(match)-1].score1 = int(score1)
-        self.tournament.roundsList[self.tournament.currentRound-1].matchsList[int(match)-1].score2 = int(score2)
+            if tournament.currentRound == tournament.numberOfRounds:
+                tournament.endDate = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+                tournament.status = "Terminé"
 
-    def end_round(self):
-        self.calculate_player_score()
-        self.tournament.currentRound += 1
-        self.create_round()
-        self.sort_players()
-        self.create_matchs()
-        self.display_players()
-        self.display_current_round()
+                print("Le tournoi est terminé. Résultats finaux :")
+                self.calculate_player_score(tournament)
+                self.display_players(tournament)
 
-    def calculate_player_score(self):
-        for player in self.tournament.playersList:
+            else:
+                tournament.currentRound += 1
+                self.create_round(tournament)
+                self.sort_players(tournament)
+                self.create_matchs(tournament)
+                self.display_players(tournament)
+                self.display_round(tournament.roundsList[-1])
+        else:
+            print("Action impossible, le tournoi est terminé.")
+
+    def calculate_player_score(self, tournament):
+        for player in tournament.playersList:
             player.score = 0
-            for round in self.tournament.roundsList:
+            for round in tournament.roundsList:
                 for match in round.matchsList:
                     if match.joueur1 == player:
                         player.score += match.score1
                     elif match.joueur2 == player:
                         player.score += match.score2
 
-    def display_tournament(self):
-        self.tournamentView.display_tournament(self.tournament)
+    def export_tournament_to_JSON(self):
+        fileName = "data/current_tournament.json"
+        with open(fileName, "w", encoding="utf-8") as file:
+            json.dump(self.tournament.to_dict(), file, indent=4)
+        pass
 
-    def display_current_round(self):
-        self.tournamentView.display_current_round(self.tournament)
+    def import_tournament_from_JSON(self):
+        pass
 
-    def display_players(self):
-        self.tournamentView.display_players(self.tournament)
+    def display_all_tournaments(self):
+        self.tournamentView.display_all_tournaments(self.tournaments)
+
+    def display_tournament(self, tournament):
+        self.tournamentView.display_tournament(tournament)
+
+        for round in tournament.roundsList:
+            self.tournamentView.display_round(round)
+
+    def display_round(self, round):
+        self.tournamentView.display_round(round)
+
+    def display_players(self, tournament):
+        self.tournamentView.display_players(tournament)
