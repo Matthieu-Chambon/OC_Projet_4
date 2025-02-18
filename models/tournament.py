@@ -1,5 +1,4 @@
 from models.round import Round
-# from models.match import Match
 from models.user import User
 
 import random
@@ -13,7 +12,7 @@ class Tournament:
     def __init__(self, name, location, rounds, players, description):
         self.name = name
         self.location = location
-        self.startDate = "Aucune date de début" 
+        self.startDate = "Aucune date de début"
         self.endDate = "Aucune date de fin"
         self.numberOfRounds = rounds
         self.currentRound = 1
@@ -90,6 +89,7 @@ class Tournament:
                     elif match.joueur2 == player:
                         score += match.score2
             self.scores[player.nationalID] = score
+        self.sort_players()
 
     def check_status(self, status):
         if self.status == status:
@@ -104,4 +104,14 @@ class Tournament:
         else:
             print("Action impossible, le tournoi est terminé.")
 
+        return False
+
+    def played_together(self, j1, j2):
+        played_pairs = set()
+        for round in self.roundsList:
+            for match in round.matchsList:
+                played_pairs.add((match.joueur1, match.joueur2))
+
+        if (j1, j2) in played_pairs or (j2, j1) in played_pairs:
+            return True
         return False

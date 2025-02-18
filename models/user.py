@@ -54,6 +54,9 @@ class User:
     def __eq__(self, other):
         return self.nationalID == other.nationalID
 
+    def __hash__(self):
+        return hash(self.nationalID)
+
 
 if __name__ == "__main__":
     pass

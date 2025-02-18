@@ -16,6 +16,8 @@ class MenuManager:
                     self.select_tournament(tournamentManager)
                 case "3":
                     tournamentManager.create_new_tournament(userManager)
+                case "4":
+                    pass
                 case "q" | "Q":
                     break
                 case _:
@@ -29,13 +31,13 @@ class MenuManager:
                 case "1":
                     userManager.display_users()
                 case "2":
-                    pass
+                    userManager.create_new_user()
                 case "3":
                     pass
                 case "4":
-                    userManager.create_fake_users()
+                    pass
                 case "5":
-                    userManager.create_new_user()
+                    userManager.create_fake_users()
                 case "q" | "Q":
                     break
                 case _:
@@ -49,16 +51,18 @@ class MenuManager:
                 case "1":
                     tournamentManager.display_tournament(tournament)
                 case "2":
-                    tournamentManager.start_tournament(tournament)
-                case "3":
                     if tournament.check_status("En cours"):
                         tournamentManager.display_round(tournament.roundsList[-1])
-                case "4":
-                    tournamentManager.edit_match(tournament)
-                case "5":
-                    tournamentManager.end_round(tournament)
-                case "6":
+                case "3":
                     tournamentManager.display_players(tournament)
+                case "4":
+                    tournamentManager.start_tournament(tournament)
+                case "5":
+                    pass
+                case "6":
+                    tournamentManager.edit_match(tournament)
+                case "7":
+                    tournamentManager.end_round(tournament)
                 case "q" | "Q":
                     break
                 case _:

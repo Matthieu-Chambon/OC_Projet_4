@@ -60,9 +60,22 @@ class TournamentManager:
 
     # Créer les matchs d'un round en fonction du tri
     def create_matchs(self, tournament):
-        # Créer nb_joueurs/2 matchs
-        for i in range(int(len(tournament.playersList)/2)):
-            tournament.roundsList[tournament.currentRound-1].matchsList.append(Match(tournament.playersList[i*2], tournament.playersList[i*2+1]))
+        players = tournament.playersList[:]
+
+        while len(players) > 0:
+            player1 = players.pop(0)
+            for i, player2 in enumerate(players):
+                if not tournament.played_together(player1, player2) and not tournament.played_together(player2, player1):
+                    tournament.roundsList[-1].matchsList.append(Match(player1, player2))
+                    players.pop(i)
+                    break
+            else:
+                tournament.roundsList[-1].matchsList.append(Match(player1, players[0]))
+                players.pop(0)
+
+        # # Créer nb_joueurs/2 matchs
+        # for i in range(int(len(tournament.playersList)/2)):
+        #     tournament.roundsList[tournament.currentRound-1].matchsList.append(Match(tournament.playersList[i*2], tournament.playersList[i*2+1]))
         Tournament.save_tournaments_to_JSON(self.tournaments)
 
     def edit_match(self, tournament):
@@ -89,12 +102,11 @@ class TournamentManager:
                             tournament.roundsList[tournament.currentRound-1].matchsList[int(match)-1].score2 = 0.5
                 else:
                     print("Numéro de match invalide.")
-
+            tournament.update_scores()
             Tournament.save_tournaments_to_JSON(self.tournaments)
 
     def end_round(self, tournament):
         if tournament.check_status("En cours"):
-            tournament.update_scores()
             tournament.roundsList[-1].endDate = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
 
             if tournament.currentRound == tournament.numberOfRounds:
@@ -102,13 +114,11 @@ class TournamentManager:
                 tournament.status = "Terminé"
 
                 print("Le tournoi est terminé. Résultats finaux :")
-                tournament.update_scores()
                 self.display_players(tournament)
 
             else:
                 tournament.currentRound += 1
                 self.create_round(tournament)
-                tournament.sort_players()
                 self.create_matchs(tournament)
                 self.display_players(tournament)
                 self.display_round(tournament.roundsList[-1])
