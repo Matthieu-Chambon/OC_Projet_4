@@ -29,9 +29,9 @@ class MenuManager:
                 case "1":
                     userManager.display_users()
                 case "2":
-                    userManager.export_users_to_JSON()
+                    pass
                 case "3":
-                    userManager.import_users_from_JSON()
+                    pass
                 case "4":
                     userManager.create_fake_users()
                 case "5":
@@ -49,9 +49,10 @@ class MenuManager:
                 case "1":
                     tournamentManager.display_tournament(tournament)
                 case "2":
-                    pass
+                    tournamentManager.start_tournament(tournament)
                 case "3":
-                    tournamentManager.display_round(tournament.roundsList[-1])
+                    if tournament.check_status("En cours"):
+                        tournamentManager.display_round(tournament.roundsList[-1])
                 case "4":
                     tournamentManager.edit_match(tournament)
                 case "5":

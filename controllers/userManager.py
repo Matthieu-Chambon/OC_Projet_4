@@ -1,36 +1,13 @@
 from models import User
 from views import UserView
 
-import json
-import os
 import re
 
 
 class UserManager:
     def __init__(self):
-        self.users = []
+        self.users = User.load_users_from_JSON()
         self.userView = UserView()
-        self.import_users_from_JSON()
-
-    def import_users_from_JSON(self):
-        fileName = "data/users.json"
-
-        if os.path.exists(fileName):
-            with open(fileName, "r", encoding="utf-8") as file:
-                data = json.load(file)
-                self.users = [User(user["surname"], user["name"], user["dateOfBirth"], user["nationalID"]) for user in data]
-            print("Importation des données réalisée avec succès !")
-        else:
-            print("Le fichier JSON n'existe pas. Aucune donnée importée.")
-
-    def export_users_to_JSON(self):
-        fileName = "data/users.json"
-        with open(fileName, "w", encoding="utf-8") as file:
-            json.dump([user.to_dict() for user in self.users], file, indent=4)
-
-    def reset_scores(self):
-        for user in self.users:
-            user.score = 0
 
     def create_fake_users(self):
         self.users = []
@@ -50,6 +27,8 @@ class UserManager:
         self.users.append(User("André", "Lucie", "08/04/1996", "AB66778"))
         self.users.append(User("Bernard", "Paul", "21/09/1984", "CD88990"))
         self.users.append(User("Noel", "Clara", "02/12/1982", "EF11223"))
+
+        User.save_users_to_JSON(self.users)
 
     def create_new_user(self):
 
@@ -80,14 +59,13 @@ class UserManager:
         print(f"Date de naissance : {dateOfBirth}")
         print(f"Identifiant national : {nationalID}")
 
-        self.export_users_to_JSON()
+        User.save_users_to_JSON(self.users)
 
     def get_valid_input(self, prompt, regex):
         while True:
             user_input = input(f"\n>>> {prompt} : ")
 
             if re.fullmatch(regex, user_input):
-                print(f"\"{user_input}\" est valide !")
                 return user_input
             else:
                 print(f"\"{user_input}\" est invalide. Réessayez.")

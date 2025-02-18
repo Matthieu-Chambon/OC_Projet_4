@@ -4,7 +4,7 @@ from controllers import UserManager, TournamentManager, MenuManager
 class Application:
     def __init__(self):
         self.userManager = UserManager()
-        self.tournamentManager = TournamentManager()
+        self.tournamentManager = TournamentManager(self.userManager)
         self.menuManager = MenuManager()
 
     def display_menu(self):

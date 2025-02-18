@@ -11,7 +11,7 @@ class TournamentView():
 
     def display_tournament(self, tournament):
         col_width = 18
-        print("\n - Tournoi actuel - \n")
+        print("\n - Informations sur le tournoi - \n")
         print(f"{'Nom : ':<{col_width}}{tournament.name}")
         print(f"{'Lieu : ':<{col_width}}{tournament.location}")
         print(f"{'Date de début : ':<{col_width}}{tournament.startDate}")
@@ -30,7 +30,7 @@ class TournamentView():
         print("=" * len(header))
 
         for index, player in enumerate(tournament.playersList, start=1):
-            print(f"{index:<{col_widths[0]}} {player.surname:<{col_widths[1]}} {player.name:<{col_widths[2]}} {player.score:<{col_widths[3]}}")
+            print(f"{index:<{col_widths[0]}} {player.surname:<{col_widths[1]}} {player.name:<{col_widths[2]}} {tournament.scores[player.nationalID]:<{col_widths[3]}}")
 
     def display_round(self, round):
         print("\n - Matchs du " + round.name + " - \n")
