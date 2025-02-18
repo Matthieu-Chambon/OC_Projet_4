@@ -25,7 +25,14 @@ class TournamentManager:
         while True:
             user_input = self.get_valid_input("Choisissez un joueur via son N° (q > quitter | a > affichage)", r"^[1-9][0-9]*$|^[aAqQ]$", "q")
             if user_input == "q" or user_input == "Q":
-                break
+                if len(players) % 2 == 0:
+                    if len(players) != 0:
+                        break
+                    else:
+                        print("Vous devez sélectionner au moins 2 joueurs.")
+                else:
+                    print("Le nombre de joueurs doit être pair.")
+
             elif user_input == "a" or user_input == "A":
                 print("\n - Liste des joueurs sélectionnés -")
                 if len(players) == 0:
@@ -42,9 +49,11 @@ class TournamentManager:
                 print(f"{userManager.users[int(user_input)-1].surname} {userManager.users[int(user_input)-1].name} a été ajouté.")
 
         self.tournaments.append(Tournament(name, place, rounds, players, description))
-        self.tournaments[-1].sort_players()
+        self.tournaments[-1].sort_players_by_score()
         self.tournamentView.display_tournament(self.tournaments[-1])
         self.tournamentView.display_players(self.tournaments[-1])
+
+        Tournament.save_tournaments_to_JSON(self.tournaments)
 
     def start_tournament(self, tournament):
         if tournament.check_status("Non commencé"):
@@ -73,9 +82,6 @@ class TournamentManager:
                 tournament.roundsList[-1].matchsList.append(Match(player1, players[0]))
                 players.pop(0)
 
-        # # Créer nb_joueurs/2 matchs
-        # for i in range(int(len(tournament.playersList)/2)):
-        #     tournament.roundsList[tournament.currentRound-1].matchsList.append(Match(tournament.playersList[i*2], tournament.playersList[i*2+1]))
         Tournament.save_tournaments_to_JSON(self.tournaments)
 
     def edit_match(self, tournament):
@@ -124,6 +130,25 @@ class TournamentManager:
                 self.display_round(tournament.roundsList[-1])
 
         Tournament.save_tournaments_to_JSON(self.tournaments)
+
+    def delete_tournament(self):
+        self.display_all_tournaments()
+
+        while True:
+            user_input = self.get_valid_input("Entrez le numéro du tournoi à supprimer (q > quitter)", r"^[1-9][0-9]*$|^[qQ]$", "q")
+            if user_input == "q" or user_input == "Q":
+                break
+            elif int(user_input) <= len(self.tournaments):
+                user_confirm = self.get_valid_input(f"Confirmez-vous la suppression du tournoi \"{self.tournaments[int(user_input)-1].name}\" ? (o/n)", r"^[oOnN]$", "n")
+                if user_confirm == "o" or user_confirm == "O":
+                    print(f"Tournoi \"{self.tournaments[int(user_input)-1].name}\" supprimé.")
+                    self.tournaments.pop(int(user_input)-1)
+                    Tournament.save_tournaments_to_JSON(self.tournaments)
+                    self.display_all_tournaments()
+                else:
+                    print("Suppression annulée.")
+            else:
+                print("Numéro de tournoi invalide.")
 
     def display_all_tournaments(self):
         self.tournamentView.display_all_tournaments(self.tournaments)

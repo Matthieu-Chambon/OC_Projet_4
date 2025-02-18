@@ -34,9 +34,10 @@ class User:
         if os.path.exists(FILE_NAME):
             with open(FILE_NAME, "r", encoding="utf-8") as file:
                 data = json.load(file)
+                print(f"Importation des données du fichier JSON \"{FILE_NAME}\".")
                 return [User.from_dict(user) for user in data]
         else:
-            print("Le fichier JSON n'existe pas. Aucune donnée importée.")
+            print(f"Le fichier JSON \"{FILE_NAME}\" n'existe pas. Aucune donnée importée.")
             return []
 
     @staticmethod

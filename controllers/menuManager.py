@@ -15,9 +15,12 @@ class MenuManager:
                 case "2":
                     self.select_tournament(tournamentManager)
                 case "3":
-                    tournamentManager.create_new_tournament(userManager)
+                    if len(userManager.users) < 2:
+                        print("Il faut au moins 2 utilisateurs pour créer un tournoi.")
+                    else:
+                        tournamentManager.create_new_tournament(userManager)
                 case "4":
-                    pass
+                    tournamentManager.delete_tournament()
                 case "q" | "Q":
                     break
                 case _:
@@ -35,7 +38,7 @@ class MenuManager:
                 case "3":
                     pass
                 case "4":
-                    pass
+                    userManager.delete_user()
                 case "5":
                     userManager.create_fake_users()
                 case "q" | "Q":

@@ -61,6 +61,20 @@ class UserManager:
 
         User.save_users_to_JSON(self.users)
 
+    def delete_user(self):
+        self.display_users()
+        while True:
+            user_input = self.get_valid_input("Entrez le numéro de l'utilisateur à supprimer (q > quitter)", r"^[1-9][0-9]*$|^[qQ]$")
+            if user_input == "q" or user_input == "Q":
+                break
+            elif int(user_input) <= len(self.users):
+                print(f"Utilisateur {self.users[int(user_input)-1].surname} {self.users[int(user_input)-1].name} supprimé")
+                self.users.pop(int(user_input)-1)
+                self.display_users()
+                User.save_users_to_JSON(self.users)
+            else:
+                print("Le nombre choisi est trop grand. Réessayez.")
+
     def get_valid_input(self, prompt, regex):
         while True:
             user_input = input(f"\n>>> {prompt} : ")
