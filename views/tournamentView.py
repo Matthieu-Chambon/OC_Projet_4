@@ -1,49 +1,85 @@
+from rich import print
+from rich.console import Console
+from rich.table import Table
+from rich.panel import Panel
+from rich.console import Group
+from rich.text import Text
+
+
 class TournamentView():
+    def __init__(self):
+        self.console = Console()
+
     def display_all_tournaments(self, tournaments):
-        print("\n - Liste de tous les tournois - \n")
-        col_widths = [5, 20, 20, 15]
-        header = f"{'N°':<{col_widths[0]}} {'Nom':<{col_widths[1]}} {'Lieu':<{col_widths[2]}} {'Statut':<{col_widths[3]}}"
-        print(header)
-        print("=" * len(header))
+        table = Table(title="\nListe de tous les tournois :trophy:")
+        table.title_style = "bold"
+        table.add_column("N°", style="red", justify="center")
+        table.add_column("Nom", style="cyan", justify="center")
+        table.add_column("Lieu", style="yellow", justify="center")
+        table.add_column("Statut", style="green", justify="center")
 
         for index, tournament in enumerate(tournaments, start=1):
-            print(f"{index:<{col_widths[0]}} {tournament.name:<{col_widths[1]}} {tournament.location:<{col_widths[2]}} {tournament.status:<{col_widths[3]}}")
+            table.add_row(str(index), tournament.name, tournament.location, tournament.status)
+
+        self.console.print(table)
 
     def display_tournament(self, tournament):
+        elements = []
+
         col_width = 18
-        print("\n - Informations sur le tournoi - \n")
-        print(f"{'Nom : ':<{col_width}}{tournament.name}")
-        print(f"{'Lieu : ':<{col_width}}{tournament.location}")
-        print(f"{'Date de début : ':<{col_width}}{tournament.startDate}")
-        print(f"{'Date de fin : ':<{col_width}}{tournament.endDate}")
-        print(f"{'Nombre de tours : ':<{col_width}}{tournament.numberOfRounds}")
-        print(f"{'Tour actuel : ':<{col_width}}{tournament.currentRound}")
-        print(f"{'Description : ':<{col_width}}{tournament.description}")
-        print(f"{'Statut : ':<{col_width}}{tournament.status}")
+        text = Text(f"\n{'Nom : ':<{col_width}}{tournament.name}"
+                    + f"\n{'Lieu : ':<{col_width}}{tournament.location}"
+                    + f"\n{'Date de début : ':<{col_width}}{tournament.startDate}"
+                    + f"\n{'Date de fin : ':<{col_width}}{tournament.endDate}"
+                    + f"\n{'Nombre de tours : ':<{col_width}}{tournament.numberOfRounds}"
+                    + f"\n{'Tour actuel : ':<{col_width}}{tournament.currentRound}"
+                    + f"\n{'Description : ':<{col_width}}{tournament.description}"
+                    + f"\n{'Statut : ':<{col_width}}{tournament.status}\n"
+                    )
+
+        elements.extend(text)
+        elements.extend(item for round in tournament.roundsList for item in self.display_round(round, False))
+
+        group = Group(*elements)
+        panel = Panel(group, title=tournament.name, expand=False)
+
+        print()
+        self.console.print(panel)
 
     def display_players(self, tournament):
-        print("\n - Liste des joueurs du tournoi - \n")
-
-        col_widths = [5, 15, 15, 7]
-        header = f"{'N°':<{col_widths[0]}} {'Nom':<{col_widths[1]}} {'Prénom':<{col_widths[2]}} {'Score':<{col_widths[3]}}"
-        print(header)
-        print("=" * len(header))
+        table = Table(title="\nListe des joueurs du tournoi :man: :woman:")
+        table.title_style = "bold"
+        table.min_width = len(table.title)
+        table.add_column("N°", style="red", justify="center")
+        table.add_column("Joueur", style="cyan", justify="center")
+        table.add_column("Score", style="yellow", justify="center")
 
         for index, player in enumerate(tournament.playersList, start=1):
-            print(f"{index:<{col_widths[0]}} {player.surname:<{col_widths[1]}} {player.name:<{col_widths[2]}} {tournament.scores[player.nationalID]:<{col_widths[3]}}")
+            table.add_row(str(index), f"{player.name} {player.surname}", str(tournament.scores[player.nationalID]))
 
-    def display_round(self, round):
-        print("\n - Matchs du " + round.name + " - \n")
+        self.console.print(table)
 
-        print(f"{'Date de début : ':<{16}}{round.startDate}")
-        print(f"{'Date de fin : ':<{16}}{round.endDate}\n")
+    def display_round(self, round, show):
 
-        col_widths = [5, 20, 7, 2, 7, 20]
-        header = f"{'N°':<{col_widths[0]}} {'Joueur 1':<{col_widths[1]}} {'Score':<{col_widths[2]}} {'VS':^{col_widths[3]}} {'Score':>{col_widths[4]}} {'Joueur 2':>{col_widths[5]}}"
-        print(header)
-        print("=" * len(header))
+        table = Table(title="\nListe des matchs du " + round.name)
+        table.title_style = "bold"
+        table.add_column("N°", style="red", justify="center")
+        table.add_column("Joueur 1", style="cyan", justify="left")
+        table.add_column("Score", style="yellow", justify="center")
+        table.add_column("VS", style="white", justify="center")
+        table.add_column("Score", style="yellow", justify="center")
+        table.add_column("Joueur 2", style="cyan", justify="right")
 
         for index, match in enumerate(round.matchsList, start=1):
             j1_fullname = f"{match.joueur1.surname} {match.joueur1.name}"
             j2_fullname = f"{match.joueur2.surname} {match.joueur2.name}"
-            print(f"{index:<{col_widths[0]}} {j1_fullname:<{col_widths[1]}} {match.score1:<{col_widths[2]}} {'VS':^{col_widths[3]}} {match.score2:>{col_widths[4]}} {j2_fullname:>{col_widths[5]}}")
+            table.add_row(str(index), j1_fullname, str(match.score1), "VS", str(match.score2), j2_fullname)
+
+        text = Text(f"{'Date de début : ':<{16}}{round.startDate}"
+                    + f"\n{'Date de fin : ':<{16}}{round.endDate}\n")
+
+        if show:
+            self.console.print(table)
+            print(text)
+
+        return table, text

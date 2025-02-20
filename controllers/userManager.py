@@ -28,6 +28,7 @@ class UserManager:
         self.users.append(User("Bernard", "Paul", "21/09/1984", "CD88990"))
         self.users.append(User("Noel", "Clara", "02/12/1982", "EF11223"))
 
+        self.sort_users("alphabetical")
         User.save_users_to_JSON(self.users)
 
     def create_new_user(self):
@@ -59,6 +60,7 @@ class UserManager:
         print(f"Date de naissance : {dateOfBirth}")
         print(f"Identifiant national : {nationalID}")
 
+        self.sort_users("alphabetical")
         User.save_users_to_JSON(self.users)
 
     def delete_user(self):
@@ -74,6 +76,10 @@ class UserManager:
                 User.save_users_to_JSON(self.users)
             else:
                 print("Le nombre choisi est trop grand. Réessayez.")
+
+    def sort_users(self, order):
+        if order == "alphabetical":
+            self.users.sort(key=lambda user: user.surname, reverse=False)
 
     def get_valid_input(self, prompt, regex):
         while True:

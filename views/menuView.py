@@ -1,34 +1,82 @@
+from rich import print
+from rich.console import Console
+from rich.panel import Panel
+from rich.text import Text
+from rich import box
+
+
 class MenuView:
+    def __init__(self):
+        self.console = Console()
+
     def main_menu(self):
-        print("\nx=x=x=x=x=x=x MENU PRINCIPAL x=x=x=x=x=x=x\n")
-        print("  1. Liste des utilisateurs")
-        print("  2. Liste des tournois")
-        print("  3. Créer un nouveau tournoi")
-        print("  4. Supprimer un tournoi")
-        print("  Q. Quitter")
+        text = Text.from_markup(
+            "\n1. [cyan]Liste des utilisateurs[/cyan]\n"
+            "2. [cyan]Liste des tournois[/cyan]\n"
+            "3. [green]Créer un nouveau tournoi[/green]\n"
+            "4. [red]Supprimer un tournoi[/red]\n"
+            "Q. [yellow]Quitter[/yellow]",
+            justify="left")
+
+        panel = Panel(
+            text,
+            title="[bold white]MENU PRINCIPAL :chess_pawn:[/bold white]",
+            border_style="gray50",
+            expand=False,
+            box=box.DOUBLE,
+        )
+
+        print()
+        self.console.print(panel)
 
         return input("\n>>> Entrez votre choix : ")
 
     def user_menu(self):
-        print("\nx=x=x=x=x=x=x UTILISATEURS x=x=x=x=x=x=x\n")
-        print("  1. Afficher utilisateurs")
-        print("  2. Créer un nouveau utilisateur")
-        print("  3. Modifier un utilisateur")
-        print("  4. Supprimer un utilisateur")
-        print("  5. Créer des faux utilisateurs")
-        print("  Q. <== Retour")
+
+        text = Text.from_markup(
+            "\n1. [cyan]Afficher utilisateurs[/cyan]\n"
+            "2. [green]Créer un nouveau utilisateur[/green]\n"
+            "3. [dark_orange]Modifier un utilisateur[/dark_orange]\n"
+            "4. [red]Supprimer un utilisateur[/red]\n"
+            "5. [magenta]Créer des faux utilisateurs[/magenta]\n"
+            "Q. [yellow]<== Retour[/yellow]",
+            justify="left"
+            )
+
+        panel = Panel(
+            text,
+            title="[bold white]UTILISATEURS :man:[/bold white]",
+            border_style="gray50",
+            expand=False,
+            box=box.DOUBLE,
+        )
+
+        print()
+        self.console.print(panel)
 
         return input("\n>>> Entrez votre choix : ")
 
     def tournament_menu(self):
-        print("\nx=x=x=x=x=x=x TOURNOI x=x=x=x=x=x=x\n")
-        print("  1. Afficher les informations du tournoi")
-        print("  2. Afficher les matchs du tour en cours")
-        print("  3. Afficher les joueurs du tournoi")
-        print("  4. Commencer le tournoi")
-        print("  5. Modifier le tournoi")
-        print("  6. Modifier un match")
-        print("  7. Terminer le tour")
-        print("  Q. <== Retour")
+        text = Text.from_markup(
+            "\n1. [cyan]Afficher les informations du tournoi[/cyan]\n"
+            "2. [cyan]Afficher les matchs du tour en cours[/cyan]\n"
+            "3. [cyan]Afficher les joueurs du tournoi[/cyan]\n"
+            "4. [green]Commencer le tournoi[/green]\n"
+            "5. [dark_orange]Modifier le tournoi[/dark_orange]\n"
+            "6. [dark_orange]Modifier un match[/dark_orange]\n"
+            "7. [red]Terminer le tour[/red]\n"
+            "Q. [yellow]<== Retour[/yellow]",
+            justify="left"
+        )
+
+        panel = Panel(
+            text,
+            title="[bold white]TOURNOI :trophy:[/bold white]",
+            border_style="gray50",
+            expand=False,
+            box=box.DOUBLE,
+        )
+        print()
+        self.console.print(panel)
 
         return input("\n>>> Entrez votre choix : ")

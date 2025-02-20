@@ -1,12 +1,21 @@
+from rich.console import Console
+from rich.table import Table
+
+
 class UserView():
+    def __init__(self):
+        self.console = Console()
+
     def display_users(self, users):
-        col_widths = [5, 15, 15, 20, 12]
 
-        print("\n - Liste de tous les utilisateurs - \n")
-
-        header = f"{'N°':<{col_widths[0]}} {'Nom':<{col_widths[1]}} {'Prénom':<{col_widths[2]}} {'Date de naissance':<{col_widths[3]}} {'ID National':<{col_widths[4]}}"
-        print(header)
-        print("=" * len(header))
+        table = Table(title="\nListe de tous les utilisateurs :man: :woman:")
+        table.title_style = "bold"
+        table.add_column("N°", style="red", justify="center")
+        table.add_column("Nom", style="cyan", justify="center")
+        table.add_column("Prénom", style="yellow", justify="center")
+        table.add_column("Date de naissance", style="magenta", justify="center")
+        table.add_column("ID National", style="green", justify="center")
 
         for index, user in enumerate(users, start=1):
-            print(f"{index:<{col_widths[0]}} {user.surname:<{col_widths[1]}} {user.name:<{col_widths[2]}} {user.dateOfBirth:<{col_widths[3]}} {user.nationalID:<{col_widths[4]}}")
+            table.add_row(str(index), user.surname, user.name, user.dateOfBirth, user.nationalID)
+        self.console.print(table)

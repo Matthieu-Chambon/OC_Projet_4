@@ -156,11 +156,8 @@ class TournamentManager:
     def display_tournament(self, tournament):
         self.tournamentView.display_tournament(tournament)
 
-        for round in tournament.roundsList:
-            self.tournamentView.display_round(round)
-
     def display_round(self, round):
-        self.tournamentView.display_round(round)
+        self.tournamentView.display_round(round, True)
 
     def display_players(self, tournament):
         self.tournamentView.display_players(tournament)
