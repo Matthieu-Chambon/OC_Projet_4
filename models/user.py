@@ -12,7 +12,10 @@ class User:
         self.nationalID = nationalID
 
     def __str__(self):
-        return f"{self.surname} {self.name} ({self.dateOfBirth}) - ID: {self.nationalID}"
+        return (
+            f"{self.surname} {self.name} "
+            f"({self.dateOfBirth}) {self.nationalID}"
+        )
 
     def to_dict(self):
         return {
@@ -34,10 +37,14 @@ class User:
         if os.path.exists(FILE_NAME):
             with open(FILE_NAME, "r", encoding="utf-8") as file:
                 data = json.load(file)
-                print(f"Importation des données du fichier JSON \"{FILE_NAME}\".")
+                print(
+                    f"Importation des données du fichier JSON \"{FILE_NAME}\"."
+                    )
                 return [User.from_dict(user) for user in data]
         else:
-            print(f"Le fichier JSON \"{FILE_NAME}\" n'existe pas. Aucune donnée importée.")
+            print(
+                f"Le fichier JSON \"{FILE_NAME}\" n'existe pas."
+                f" Aucune donnée importée.")
             return []
 
     @staticmethod

@@ -23,7 +23,7 @@ class UserManager:
         self.users.append(User("Girard", "Laura", "19/10/1991", "ST77889"))
         self.users.append(User("Blanc", "Maxime", "25/05/1986", "UV99001"))
         self.users.append(User("Gauthier", "Julie", "07/01/1994", "WX22334"))
-        self.users.append(User("Chevalier", "Antoine", "12/06/1989", "YZ44556"))
+        self.users.append(User("Chevalet", "Antoine", "12/06/1989", "YZ44556"))
         self.users.append(User("André", "Lucie", "08/04/1996", "AB66778"))
         self.users.append(User("Bernard", "Paul", "21/09/1984", "CD88990"))
         self.users.append(User("Noel", "Clara", "02/12/1982", "EF11223"))
@@ -42,10 +42,21 @@ class UserManager:
             "nationalID": r"^[A-Z]{2}\d{5}$"
         }
 
-        surname = self.get_valid_input("Entrez votre nom de famille", regex_patterns["surname"])
-        name = self.get_valid_input("Entrez votre prénom", regex_patterns["name"])
-        dateOfBirth = self.get_valid_input("Entrez votre date de naissance (JJ/MM/AAAA)", regex_patterns["dateOfBirth"])
-        nationalID = self.get_valid_input("Entrez votre identifiant national (AB12345)", regex_patterns["nationalID"])
+        surname = self.get_valid_input(
+            "Entrez votre nom de famille",
+            regex_patterns["surname"])
+
+        name = self.get_valid_input(
+            "Entrez votre prénom",
+            regex_patterns["name"])
+
+        dateOfBirth = self.get_valid_input(
+            "Entrez votre date de naissance (JJ/MM/AAAA)",
+            regex_patterns["dateOfBirth"])
+
+        nationalID = self.get_valid_input(
+            "Entrez votre identifiant national (AB12345)",
+            regex_patterns["nationalID"])
 
         self.users.append(User(
             surname,
@@ -66,14 +77,22 @@ class UserManager:
     def delete_user(self):
         self.display_users()
         while True:
-            user_input = self.get_valid_input("Entrez le numéro de l'utilisateur à supprimer (q > quitter)", r"^[1-9][0-9]*$|^[qQ]$")
+            user_input = self.get_valid_input(
+                "Entrez le numéro de l'utilisateur à supprimer (q > quitter)",
+                r"^[1-9][0-9]*$|^[qQ]$")
+
             if user_input == "q" or user_input == "Q":
                 break
+
             elif int(user_input) <= len(self.users):
-                print(f"Utilisateur {self.users[int(user_input)-1].surname} {self.users[int(user_input)-1].name} supprimé")
+                surname = self.users[int(user_input)-1].surname
+                name = self.users[int(user_input)-1].name
+                print(
+                    f"Utilisateur {surname} {name} supprimé")
                 self.users.pop(int(user_input)-1)
                 self.display_users()
                 User.save_users_to_JSON(self.users)
+
             else:
                 print("Le nombre choisi est trop grand. Réessayez.")
 

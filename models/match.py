@@ -9,7 +9,10 @@ class Match:
         self.score2 = 0
 
     def __str__(self):
-        return f"{self.joueur1} ({self.score1}) - ({self.score2}) {self.joueur2}"
+        return (
+            f"{self.joueur1} ({self.score1}) - "
+            f"({self.score2}) {self.joueur2}"
+        )
 
     def to_dict(self):
         return {

@@ -11,7 +11,12 @@ class Round:
         self.endDate = "Aucune date de fin"
 
     def __str__(self):
-        return f"Name : {self.name}, Start date : {self.startDate}, End date : {self.endDate}, Matchs : {self.matchsList}"
+        return (
+            f"Name : {self.name}, "
+            f"Start date : {self.startDate}, "
+            f"End date : {self.endDate}, "
+            f"Matchs : {self.matchsList}"
+        )
 
     def to_dict(self):
         return {
@@ -26,6 +31,8 @@ class Round:
         round = Round(round_dict["name"])
         round.startDate = round_dict["startDate"]
         round.endDate = round_dict["endDate"]
-        round.matchsList = [Match.from_dict(match_dict) for match_dict in round_dict["matchsList"]]
+        round.matchsList = [
+            Match.from_dict(match_dict)
+            for match_dict in round_dict["matchsList"]]
 
         return round

@@ -32,7 +32,8 @@ class Tournament:
             "currentRound": self.currentRound,
             "roundsList": [round.to_dict() for round in self.roundsList],
             "playersList": [player.to_dict() for player in self.playersList],
-            "scores": {nationalID: score for nationalID, score in self.scores.items()},
+            "scores": {nationalID: score
+                       for nationalID, score in self.scores.items()},
             "description": self.description,
             "status": self.status
         }
@@ -43,14 +44,19 @@ class Tournament:
             tournament_dict["name"],
             tournament_dict["location"],
             tournament_dict["numberOfRounds"],
-            [User.from_dict(player_dict) for player_dict in tournament_dict["playersList"]],
+            [User.from_dict(player_dict)
+             for player_dict in tournament_dict["playersList"]],
             tournament_dict["description"])
 
         tournament.startDate = tournament_dict["startDate"]
         tournament.endDate = tournament_dict["endDate"]
         tournament.currentRound = tournament_dict["currentRound"]
-        tournament.roundsList = [Round.from_dict(round_dict) for round_dict in tournament_dict["roundsList"]]
-        tournament.scores = {nationalID: score for nationalID, score in tournament_dict["scores"].items()}
+        tournament.roundsList = [
+            Round.from_dict(round_dict)
+            for round_dict in tournament_dict["roundsList"]
+            ]
+        tournament.scores = {nationalID: score for nationalID,
+                             score in tournament_dict["scores"].items()}
         tournament.status = tournament_dict["status"]
 
         return tournament
@@ -60,22 +66,30 @@ class Tournament:
         if os.path.exists(FILE_NAME):
             with open(FILE_NAME, "r", encoding="utf-8") as file:
                 data = json.load(file)
-                print(f"Importation des données du fichier JSON \"{FILE_NAME}\".")
-                return [Tournament.from_dict(tournament, users) for tournament in data]
+                print(
+                    f"Importation des données du fichier JSON \"{FILE_NAME}\"")
+                return [Tournament.from_dict(tournament, users)
+                        for tournament in data]
         else:
-            print(f"Le fichier JSON \"{FILE_NAME}\" n'existe pas. Aucune donnée importée.")
+            print(
+                f"Le fichier JSON \"{FILE_NAME}\" n'existe pas. "
+                f"Aucune donnée importée.")
             return []
 
     @staticmethod
     def save_tournaments_to_JSON(tournaments):
         with open(FILE_NAME, "w", encoding="utf-8") as file:
-            json.dump([tournament.to_dict() for tournament in tournaments], file, indent=4)
+            json.dump([tournament.to_dict() for tournament in tournaments],
+                      file, indent=4)
 
     def sort_players_by_score(self):
         if self.currentRound == 1 and self.status == "Non commencé":
             random.shuffle(self.playersList)
         else:
-            self.playersList.sort(key=lambda player: self.scores[player.nationalID], reverse=True)
+            self.playersList.sort(
+                key=lambda player:
+                self.scores[player.nationalID],
+                reverse=True)
 
     def update_scores(self):
         print("update_scores")

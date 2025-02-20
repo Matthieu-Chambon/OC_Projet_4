@@ -16,7 +16,7 @@ class MenuManager:
                     self.select_tournament(tournamentManager)
                 case "3":
                     if len(userManager.users) < 2:
-                        print("Il faut au moins 2 utilisateurs pour créer un tournoi.")
+                        print("Il faut au moins 2 utilisateurs.")
                     else:
                         tournamentManager.create_new_tournament(userManager)
                 case "4":
@@ -55,7 +55,8 @@ class MenuManager:
                     tournamentManager.display_tournament(tournament)
                 case "2":
                     if tournament.check_status("En cours"):
-                        tournamentManager.display_round(tournament.roundsList[-1])
+                        last_round = tournament.roundsList[-1]
+                        tournamentManager.display_round(last_round)
                 case "3":
                     tournamentManager.display_players(tournament)
                 case "4":
@@ -81,7 +82,9 @@ class MenuManager:
                 try:
                     user_input = int(user_input)
                     if 0 < user_input <= len(tournamentManager.tournaments):
-                        self.display_tournament_menu(tournamentManager, tournamentManager.tournaments[user_input-1])
+                        self.display_tournament_menu(
+                            tournamentManager,
+                            tournamentManager.tournaments[user_input-1])
                         break
                     else:
                         print("Numéro de tournoi invalide.")
