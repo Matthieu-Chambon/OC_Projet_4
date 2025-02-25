@@ -19,7 +19,7 @@ class TournamentManager:
         self.fields = {
             "name": ["Entrez le nom du tournoi", None, "Nouveau tournoi"],
             "place": ["Entrez le lieu", None, "Paris"],
-            "nb_rounds": ["Entrez le nombre de rounds", None, 4],
+            "nb_rounds": ["Entrez le nombre de tours", None, 4],
             "description": ["Entrez la description", None,
                             "Aucune information pour le moment"]
         }

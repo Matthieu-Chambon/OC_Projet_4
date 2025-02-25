@@ -102,7 +102,6 @@ class TournamentView():
 
         self.console.print(table, justify="center")
 
-        # Affichage des rounds du tournoi
         for round in tournament.roundsList:
             self.display_round(round)
 
@@ -117,7 +116,7 @@ class TournamentView():
 
         table.add_row("1", "Nom du tournoi", tournament.name)
         table.add_row("2", "Lieu du tournoi", tournament.place)
-        table.add_row("3", "Nombre de rounds", str(tournament.nb_rounds))
+        table.add_row("3", "Nombre de tours", str(tournament.nb_rounds))
         table.add_row("4", "Description", tournament.description)
 
         nb_players = str(len(tournament.playersList))
