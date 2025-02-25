@@ -4,36 +4,37 @@ from models.user import User
 import random
 import os
 import json
+from rich import print
 
 FILE_NAME = "data/tournaments/tournaments.json"
 
 
 class Tournament:
-    def __init__(self, name, location, rounds, players, description):
+    def __init__(self, name, place, nb_rounds, players, description):
         self.name = name
-        self.location = location
+        self.place = place
         self.startDate = "Aucune date de début"
         self.endDate = "Aucune date de fin"
-        self.numberOfRounds = rounds
+        self.nb_rounds = int(nb_rounds)
         self.currentRound = 1
         self.roundsList = []
         self.playersList = players
-        self.scores = {player.nationalID: 0 for player in players}
+        self.scores = {}
         self.description = description
         self.status = "Non commencé"
 
     def to_dict(self):
         return {
             "name": self.name,
-            "location": self.location,
+            "place": self.place,
             "startDate": self.startDate,
             "endDate": self.endDate,
-            "numberOfRounds": self.numberOfRounds,
+            "nb_rounds": self.nb_rounds,
             "currentRound": self.currentRound,
             "roundsList": [round.to_dict() for round in self.roundsList],
             "playersList": [player.to_dict() for player in self.playersList],
-            "scores": {nationalID: score
-                       for nationalID, score in self.scores.items()},
+            "scores": {nationalID:
+                       score for nationalID, score in self.scores.items()},
             "description": self.description,
             "status": self.status
         }
@@ -42,8 +43,8 @@ class Tournament:
     def from_dict(tournament_dict, users):
         tournament = Tournament(
             tournament_dict["name"],
-            tournament_dict["location"],
-            tournament_dict["numberOfRounds"],
+            tournament_dict["place"],
+            tournament_dict["nb_rounds"],
             [User.from_dict(player_dict)
              for player_dict in tournament_dict["playersList"]],
             tournament_dict["description"])
@@ -82,17 +83,28 @@ class Tournament:
             json.dump([tournament.to_dict() for tournament in tournaments],
                       file, indent=4)
 
+    def init_scores(self):
+        self.scores = {
+            player.nationalID: 0
+            for player in self.playersList}
+
+    # def sort_players_by_alphabetical(self):
+    #     self.playersList.sort(
+    #             key=lambda player:
+    #             player.surname)
+
+    def shuffle_players(self):
+        random.shuffle(self.playersList)
+
     def sort_players_by_score(self):
-        if self.currentRound == 1 and self.status == "Non commencé":
-            random.shuffle(self.playersList)
-        else:
-            self.playersList.sort(
+        self.playersList.sort(
                 key=lambda player:
                 self.scores[player.nationalID],
                 reverse=True)
 
     def update_scores(self):
         print("update_scores")
+
         for player in self.playersList:
             score = 0
             for round in self.roundsList:
@@ -102,20 +114,21 @@ class Tournament:
                     elif match.joueur2 == player:
                         score += match.score2
             self.scores[player.nationalID] = score
+
         self.sort_players_by_score()
 
     def check_status(self, status):
-        if self.status == status:
+        if self.status in status:
             return True
 
         elif self.status == "Non commencé":
-            print("Action impossible, le tournoi n'a pas commencé.")
+            print("[red]Action impossible, le tournoi n'a pas commencé.")
 
         elif self.status == "En cours":
-            print("Action impossible, le tournoi a déjà commencé.")
+            print("[red]Action impossible, le tournoi a déjà commencé.")
 
         else:
-            print("Action impossible, le tournoi est terminé.")
+            print("[red]Action impossible, le tournoi est terminé.")
 
         return False
 

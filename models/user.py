@@ -23,14 +23,16 @@ class User:
             "name": self.name,
             "dateOfBirth": self.dateOfBirth,
             "nationalID": self.nationalID
-            }
+        }
 
     @staticmethod
     def from_dict(user_dict):
-        return User(user_dict["surname"],
-                    user_dict["name"],
-                    user_dict["dateOfBirth"],
-                    user_dict["nationalID"])
+        return User(
+            user_dict["surname"],
+            user_dict["name"],
+            user_dict["dateOfBirth"],
+            user_dict["nationalID"]
+        )
 
     @staticmethod
     def load_users_from_JSON():
@@ -45,6 +47,7 @@ class User:
             print(
                 f"Le fichier JSON \"{FILE_NAME}\" n'existe pas."
                 f" Aucune donnée importée.")
+
             return []
 
     @staticmethod
@@ -64,7 +67,3 @@ class User:
 
     def __hash__(self):
         return hash(self.nationalID)
-
-
-if __name__ == "__main__":
-    pass

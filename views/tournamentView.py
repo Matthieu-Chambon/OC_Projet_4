@@ -4,6 +4,9 @@ from rich.table import Table
 from rich.panel import Panel
 from rich.console import Group
 from rich.text import Text
+from rich.columns import Columns
+from rich import box
+from rich.rule import Rule
 
 
 class TournamentView():
@@ -23,41 +26,110 @@ class TournamentView():
             table.add_row(
                 str(index),
                 tournament.name,
-                tournament.location,
+                tournament.place,
                 tournament.status)
 
-        self.console.print(table)
+        self.console.print(table, justify="center")
 
     def display_tournament(self, tournament):
-        elements = []
+        # Affichage des informations générales du tournoi
+        rule = Rule(
+            title="Informations sur le tournoi :information: ",
+            style="white")
+        print(rule)
 
-        col_width = 18
-        text = Text(
-            f"\n{'Nom : ':<{col_width}}{tournament.name}"
-            f"\n{'Lieu : ':<{col_width}}{tournament.location}"
-            f"\n{'Date de début : ':<{col_width}}{tournament.startDate}"
-            f"\n{'Date de fin : ':<{col_width}}{tournament.endDate}"
-            f"\n{'Nombre de tours : ':<{col_width}}{tournament.numberOfRounds}"
-            f"\n{'Tour actuel : ':<{col_width}}{tournament.currentRound}"
-            f"\n{'Description : ':<{col_width}}{tournament.description}"
-            f"\n{'Statut : ':<{col_width}}{tournament.status}\n"
+        labels = [
+            Text("Nom : "),
+            Text("Lieu : "),
+            Text("Date de début : "),
+            Text("Date de fin : "),
+            Text("Nombre de tours : "),
+            Text("Tour actuel : "),
+            Text("Description : "),
+            Text("Statut : \n")
+        ]
+
+        data = [
+            Text(f"{tournament.name}", style="cyan"),
+            Text(f"{tournament.place}", style="cyan"),
+            Text(f"{tournament.startDate}", style="cyan"),
+            Text(f"{tournament.endDate}", style="cyan"),
+            Text(f"{tournament.nb_rounds}", style="cyan"),
+            Text(f"{tournament.currentRound}", style="cyan"),
+            Text(f"{tournament.description}", style="cyan"),
+            Text(f"{tournament.status}", style="cyan")
+        ]
+
+        labels_col = Group(*labels)
+        data_col = Group(*data)
+
+        columns = Columns([labels_col, data_col], expand=False)
+
+        pan_width = 25 + max(
+            self.console.measure(text).maximum
+            for text in data
             )
 
-        elements.extend(text)
-        elements.extend(
-            item
-            for round in tournament.roundsList
-            for item in self.display_round(round, False)
-            )
-
-        group = Group(*elements)
-        panel = Panel(group, title=tournament.name, expand=False)
+        panel = Panel(
+            columns,
+            width=pan_width,
+            box=box.SIMPLE_HEAD
+        )
 
         print()
-        self.console.print(panel)
+        self.console.print(panel, justify="center")
 
-    def display_players(self, tournament):
-        table = Table(title="\nListe des joueurs du tournoi :man: :woman:")
+        # Affichage des joueurs du tournoi
+        players = tournament.playersList[:]
+        players.sort(key=lambda player: player.surname)
+
+        table = Table(title="\nListe de tous les joueurs :man: :woman:")
+        table.title_style = "bold"
+
+        table.add_column("N°", style="red", justify="center")
+        table.add_column("Nom", style="cyan", justify="left")
+        table.add_column("Prénom", style="magenta", justify="left")
+        table.add_column("Date de naissance", style="yellow", justify="center")
+        table.add_column("ID National", style="green", justify="center")
+
+        for index, player in enumerate(players, start=1):
+            table.add_row(
+                str(index),
+                player.surname,
+                player.name,
+                player.dateOfBirth,
+                player.nationalID)
+
+        self.console.print(table, justify="center")
+
+        # Affichage des rounds du tournoi
+        for round in tournament.roundsList:
+            self.display_round(round)
+
+    def display_edit_tournament(self, tournament):
+
+        table = Table(title="\nInformations générales")
+        table.title_style = "bold"
+
+        table.add_column("N°", style="red", justify="center")
+        table.add_column("Champ", style="cyan", justify="left")
+        table.add_column("Valeur", style="yellow", justify="left")
+
+        table.add_row("1", "Nom du tournoi", tournament.name)
+        table.add_row("2", "Lieu du tournoi", tournament.place)
+        table.add_row("3", "Nombre de rounds", str(tournament.nb_rounds))
+        table.add_row("4", "Description", tournament.description)
+
+        nb_players = str(len(tournament.playersList))
+        table.add_row("5", "Liste des joueurs", nb_players + " joueur(s)")
+
+        self.console.print(table, justify="center")
+
+    def display_players_by_score(self, tournament):
+
+        table = Table(
+            title="\nScore des joueurs du tournoi :man: :woman: "
+        )
         table.title_style = "bold"
         table.min_width = len(table.title)
         table.add_column("N°", style="red", justify="center")
@@ -67,13 +139,13 @@ class TournamentView():
         for index, player in enumerate(tournament.playersList, start=1):
             table.add_row(
                 str(index),
-                f"{player.name} {player.surname}",
+                f"{player.surname} {player.name}",
                 str(tournament.scores[player.nationalID])
             )
 
-        self.console.print(table)
+        self.console.print(table, justify="center")
 
-    def display_round(self, round, show):
+    def display_round(self, round):
 
         table = Table(title="\nListe des matchs du " + round.name)
         table.title_style = "bold"
@@ -101,8 +173,26 @@ class TournamentView():
             f"\n{'Date de fin : ':<{16}}{round.endDate}\n"
             )
 
-        if show:
-            self.console.print(table)
-            print(text)
+        self.console.print(table, justify="center")
+        self.console.print(text, justify="center")
 
-        return table, text
+    def display_selected_players(self, players):
+
+        text = Text()
+
+        if len(players) == 0:
+            text.append("\nAucun joueur sélectionné.", style="cyan")
+
+        else:
+            for player in players:
+                text.append(f"\n{player.surname} {player.name}", style="cyan")
+
+        panel = Panel(
+            text,
+            title="[green]Liste des joueurs sélectionnés ",
+            expand=False,
+            box=box.ROUNDED
+        )
+
+        print()
+        self.console.print(panel, justify="center")

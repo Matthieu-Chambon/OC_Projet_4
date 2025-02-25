@@ -1,85 +1,125 @@
 from models import User
 from views import UserView
 
-import re
+# import re
+
+from rich import print
+from rich.rule import Rule
 
 
 class UserManager:
-    def __init__(self):
+    def __init__(self, app):
         self.users = User.load_users_from_JSON()
         self.userView = UserView()
 
-    def create_fake_users(self):
-        self.users = []
-        self.users.append(User("Dupont", "Jean", "15/04/1985", "AB12345"))
-        self.users.append(User("Martin", "Sophie", "22/08/1990", "CD67890"))
-        self.users.append(User("Durand", "Lucas", "05/12/1983", "EF13579"))
-        self.users.append(User("Lefevre", "Emma", "30/06/1995", "GH24680"))
-        self.users.append(User("Morel", "Hugo", "17/02/1988", "IJ98765"))
-        self.users.append(User("Lemoine", "Alice", "09/09/1992", "KL54321"))
-        self.users.append(User("Rousseau", "Thomas", "28/11/1980", "MN11223"))
-        self.users.append(User("Perrin", "Camille", "14/07/1987", "OP33445"))
-        self.users.append(User("Fournier", "Noé", "03/03/1993", "QR55667"))
-        self.users.append(User("Girard", "Laura", "19/10/1991", "ST77889"))
-        self.users.append(User("Blanc", "Maxime", "25/05/1986", "UV99001"))
-        self.users.append(User("Gauthier", "Julie", "07/01/1994", "WX22334"))
-        self.users.append(User("Chevalet", "Antoine", "12/06/1989", "YZ44556"))
-        self.users.append(User("André", "Lucie", "08/04/1996", "AB66778"))
-        self.users.append(User("Bernard", "Paul", "21/09/1984", "CD88990"))
-        self.users.append(User("Noel", "Clara", "02/12/1982", "EF11223"))
+        self.app = app
 
-        self.sort_users("alphabetical")
-        User.save_users_to_JSON(self.users)
-
-    def create_new_user(self):
-
-        print("\n - Creation d'un nouveau utilisateur -")
-
-        regex_patterns = {
+        self.regex_patterns = {
             "surname": r"^[A-ZÀ-Ö][A-Za-zÀ-ÖØ-öø-ÿ' -]{2,50}$",
             "name": r"^[A-ZÀ-Ö][A-Za-zÀ-ÖØ-öø-ÿ' -]{2,50}$",
             "dateOfBirth": r"^(0[1-9]|[12][0-9]|3[01])/(0[1-9]|1[0-2])/\d{4}$",
             "nationalID": r"^[A-Z]{2}\d{5}$"
         }
 
-        surname = self.get_valid_input(
-            "Entrez votre nom de famille",
-            regex_patterns["surname"])
+    def create_new_user(self):
 
-        name = self.get_valid_input(
-            "Entrez votre prénom",
-            regex_patterns["name"])
+        print()
+        rule = Rule(title="Création d'un nouveau utilisateur", style="white")
+        print(rule)
 
-        dateOfBirth = self.get_valid_input(
-            "Entrez votre date de naissance (JJ/MM/AAAA)",
-            regex_patterns["dateOfBirth"])
+        fields = {
+            "surname": ["Entrez le nom de famille", None],
+            "name": ["Entrez le prénom", None],
+            "dateOfBirth": ["Entrez la date de naissance", "JJ/MM/AAAA"],
+            "nationalID": ["Entrez l'identifiant national", "ex: AB12345"]
+        }
 
-        nationalID = self.get_valid_input(
-            "Entrez votre identifiant national (AB12345)",
-            regex_patterns["nationalID"])
+        user_data = {}
 
-        self.users.append(User(
-            surname,
-            name,
-            dateOfBirth,
-            nationalID
-        ))
+        for attr, (prompt, options) in fields.items():
+            user_data[attr] = self.app.get_valid_input(
+                prompt,
+                options,
+                self.regex_patterns[attr],
+                None
+            )
 
-        print("\n - Utilisateur enregistré avec succès - ")
-        print(f"Nom de famille : {surname}")
-        print(f"Prénom : {name}")
-        print(f"Date de naissance : {dateOfBirth}")
-        print(f"Identifiant national : {nationalID}")
+        new_user = User(**user_data)
+        self.users.append(new_user)
+        self.userView.display_new_user(new_user)
 
         self.sort_users("alphabetical")
         User.save_users_to_JSON(self.users)
 
+    def edit_user(self):
+        print()
+        rule = Rule(title="Modification d'un utilisateur", style="white")
+        print(rule)
+
+        while True:
+            self.display_users()
+            user_input = self.app.get_valid_input(
+                "Entrez le [red]numéro[/red] de l'utilisateur à modifier",
+                "q > quitter",
+                r"^[1-9][0-9]*$|^[qQ]$",
+                "q"
+            )
+
+            if user_input.lower() == "q":
+                break
+
+            user_index = int(user_input) - 1
+            if user_index < len(self.users):
+                user = self.users[user_index]
+
+                fields = {
+                    "1": ["surname", "le nom de famille"],
+                    "2": ["name", "le prénom"],
+                    "3": ["dateOfBirth", "la date de naissance"],
+                    "4": ["nationalID", "l'identifiant national"]
+                }
+
+                while True:
+                    self.userView.display_user(user)
+                    field_input = self.app.get_valid_input(
+                        "Entrez le [red]numéro[/red] du champ à modifier",
+                        None,
+                        r"^[1234qQ]$",
+                        "q"
+                    )
+
+                    if field_input.lower() == "q":
+                        break
+
+                    if field_input in fields:
+                        attr, label = fields[field_input]
+                        new_value = self.app.get_valid_input(
+                            f"Entrez {label}",
+                            None,
+                            self.regex_patterns[attr],
+                            None
+                        )
+                        setattr(user, attr, new_value)
+                        print("[green]L'utilisateur a été modifié avec succès")
+
+                        self.sort_users("alphabetical")
+                        User.save_users_to_JSON(self.users)
+
+                    else:
+                        print("[red]Choix invalide, veuillez réessayer.")
+
+            else:
+                print("[red]Choix invalide, veuillez réessayer.")
+
     def delete_user(self):
         self.display_users()
         while True:
-            user_input = self.get_valid_input(
-                "Entrez le numéro de l'utilisateur à supprimer (q > quitter)",
-                r"^[1-9][0-9]*$|^[qQ]$")
+            user_input = self.app.get_valid_input(
+                "Entrez le numéro de l'utilisateur à supprimer",
+                "q > quitter",
+                r"^[1-9][0-9]*$|^[qQ]$",
+                "q"
+            )
 
             if user_input == "q" or user_input == "Q":
                 break
@@ -87,27 +127,17 @@ class UserManager:
             elif int(user_input) <= len(self.users):
                 surname = self.users[int(user_input)-1].surname
                 name = self.users[int(user_input)-1].name
-                print(
-                    f"Utilisateur {surname} {name} supprimé")
+                print(f"[red]Utilisateur {surname} {name} supprimé")
                 self.users.pop(int(user_input)-1)
                 self.display_users()
                 User.save_users_to_JSON(self.users)
 
             else:
-                print("Le nombre choisi est trop grand. Réessayez.")
+                print("[red]Le nombre choisi est trop grand. Réessayez.")
 
     def sort_users(self, order):
         if order == "alphabetical":
             self.users.sort(key=lambda user: user.surname, reverse=False)
-
-    def get_valid_input(self, prompt, regex):
-        while True:
-            user_input = input(f"\n>>> {prompt} : ")
-
-            if re.fullmatch(regex, user_input):
-                return user_input
-            else:
-                print(f"\"{user_input}\" est invalide. Réessayez.")
 
     def display_users(self):
         self.userView.display_users(self.users)
