@@ -51,7 +51,6 @@ class TournamentManager:
 
         self.tournaments.append(new_tournament)
         self.tournamentView.display_tournament(new_tournament)
-        self.tournamentView.display_players_by_score(new_tournament)
 
         Tournament.save_tournaments_to_JSON(self.tournaments)
 

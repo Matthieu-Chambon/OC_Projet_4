@@ -80,28 +80,9 @@ class TournamentView():
         self.console.print(panel, justify="center")
 
         # Affichage des joueurs du tournoi
-        players = tournament.playersList[:]
-        players.sort(key=lambda player: player.surname)
+        self.display_players_by_name(tournament)
 
-        table = Table(title="\nListe de tous les joueurs :man: :woman:")
-        table.title_style = "bold"
-
-        table.add_column("N°", style="red", justify="center")
-        table.add_column("Nom", style="cyan", justify="left")
-        table.add_column("Prénom", style="magenta", justify="left")
-        table.add_column("Date de naissance", style="yellow", justify="center")
-        table.add_column("ID National", style="green", justify="center")
-
-        for index, player in enumerate(players, start=1):
-            table.add_row(
-                str(index),
-                player.surname,
-                player.name,
-                player.dateOfBirth,
-                player.nationalID)
-
-        self.console.print(table, justify="center")
-
+        # Affichage des rounds du tournoi
         for round in tournament.roundsList:
             self.display_round(round)
 
@@ -125,7 +106,6 @@ class TournamentView():
         self.console.print(table, justify="center")
 
     def display_players_by_score(self, tournament):
-
         table = Table(
             title="\nScore des joueurs du tournoi :man: :woman: "
         )
@@ -141,6 +121,29 @@ class TournamentView():
                 f"{player.surname} {player.name}",
                 str(tournament.scores[player.nationalID])
             )
+
+        self.console.print(table, justify="center")
+
+    def display_players_by_name(self, tournament):
+        players = tournament.playersList[:]
+        players.sort(key=lambda player: player.surname)
+
+        table = Table(title="\nListe de tous les joueurs :man: :woman:")
+        table.title_style = "bold"
+
+        table.add_column("N°", style="red", justify="center")
+        table.add_column("Nom", style="cyan", justify="left")
+        table.add_column("Prénom", style="magenta", justify="left")
+        table.add_column("Date de naissance", style="yellow", justify="center")
+        table.add_column("ID National", style="green", justify="center")
+
+        for index, player in enumerate(players, start=1):
+            table.add_row(
+                str(index),
+                player.surname,
+                player.name,
+                player.dateOfBirth,
+                player.nationalID)
 
         self.console.print(table, justify="center")
 
