@@ -1,8 +1,6 @@
 from models import User
 from views import UserView
 
-# import re
-
 from rich import print
 from rich.rule import Rule
 
