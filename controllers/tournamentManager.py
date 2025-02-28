@@ -288,7 +288,7 @@ class TournamentManager:
             elif int(user_input) <= len(self.tournaments):
                 name = self.tournaments[int(user_input)-1].name
                 user_confirm = self.app.get_valid_input(
-                    f"Confirmez-vous la suppression du tournoi"
+                    f"Confirmez-vous la suppression du tournoi "
                     f"\"[cyan]{name}[/cyan]\" ?",
                     "o/n",
                     r"^[oOnN]$",

@@ -103,8 +103,6 @@ class Tournament:
                 reverse=True)
 
     def update_scores(self):
-        print("update_scores")
-
         for player in self.playersList:
             score = 0
             for round in self.roundsList:
