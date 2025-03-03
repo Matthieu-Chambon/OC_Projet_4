@@ -45,8 +45,7 @@ class TournamentManager:
                 default
             )
 
-        tournament_data["players"] = \
-            self.select_tournament_players([])
+        tournament_data["players"] = self.select_tournament_players([])
         new_tournament = Tournament(**tournament_data)
 
         self.tournaments.append(new_tournament)
