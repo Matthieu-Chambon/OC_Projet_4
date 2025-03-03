@@ -88,11 +88,6 @@ class Tournament:
             player.nationalID: 0
             for player in self.playersList}
 
-    # def sort_players_by_alphabetical(self):
-    #     self.playersList.sort(
-    #             key=lambda player:
-    #             player.surname)
-
     def shuffle_players(self):
         random.shuffle(self.playersList)
 

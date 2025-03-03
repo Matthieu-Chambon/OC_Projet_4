@@ -55,13 +55,6 @@ class User:
         with open(FILE_NAME, "w", encoding="utf-8") as file:
             json.dump([user.to_dict() for user in users], file, indent=4)
 
-    @staticmethod
-    def get_user_by_nationalID(users, nationalID):
-        for user in users:
-            if user.nationalID == nationalID:
-                return user
-        return None
-
     def __eq__(self, other):
         return self.nationalID == other.nationalID
 
